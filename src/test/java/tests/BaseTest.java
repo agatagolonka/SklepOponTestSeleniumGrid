@@ -1,62 +1,61 @@
 package tests;
 
+import com.github.agatagolonka.sklepoponseleniumgrid.drivers.PropertyManager;
 import com.github.agatagolonka.sklepoponseleniumgrid.drivers.drivers.DriverManager;
-import com.github.agatagolonka.sklepoponseleniumgrid.drivers.pageObject.HomePage;
-import com.github.agatagolonka.sklepoponseleniumgrid.drivers.pageObject.ProductPage;
-import com.github.agatagolonka.sklepoponseleniumgrid.drivers.pageObject.SearchResultPage;
-import org.openqa.selenium.By;
+import com.github.agatagolonka.sklepoponseleniumgrid.drivers.pageObject.*;
+import org.apache.logging.log4j.LogManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.ITestContext;
 import org.testng.Reporter;
-import org.testng.annotations.*;
+import org.apache.logging.log4j.Logger;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 
-import java.time.Duration;
 
+public abstract class BaseTest {
 
-public class BaseTest {
     protected static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    public static final Logger assertLogger = LogManager.getLogger("Assert");
+
     protected DriverManager driverManager;
+    protected PropertyManager propertyManager;
 
     protected HomePage homePage;
+    protected RegisterPage registerPage;
+    protected SignInPage signInPage;
     protected ProductPage productPage;
+    protected CartPage cartPage;
 
-    @Parameters("browserName")
+
+    @Parameters({"browserName","testDataFileName"})
     @BeforeClass
-    public void preparation(@Optional("Chrome") String browserName){
+    public void setup(@Optional("Chrome") String browserName
+            , @Optional("default.properties") String testDataFileName){
         driverManager = new DriverManager();
         driver.set(driverManager.getDriver(browserName, "Grid"));
         ITestContext context = Reporter.getCurrentTestResult().getTestContext();
         context.setAttribute("WebDriver", driver.get());
 
-        homePage = new HomePage(driver.get());
-        SearchResultPage searchResultsPage = new SearchResultPage(driver.get());
-        ProductPage productPage = new ProductPage(driver.get());
+        propertyManager = new PropertyManager(testDataFileName);
+        homePage = new HomePage(driver.get(), propertyManager);
+        signInPage = new SignInPage(driver.get(), propertyManager);
+        registerPage = new RegisterPage(driver.get(), propertyManager);
+        cartPage = new CartPage(driver.get(), propertyManager);
     }
 
     @AfterMethod
     public void browserReset(){
-        driver.get()
-                .manage()
-                .deleteAllCookies();
+        driver.get().manage().deleteAllCookies();
+
     }
 
     @AfterClass
     public void cleanUp(){
-        driver.get()
-                .quit();
+        driver.get().quit();
         driver.remove();
     }
 
-    WebElement waitPresent(String xPath, long seconds) {
-        return new WebDriverWait(driver.get(), Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
-    }
-
-    WebElement waitClickable(String xPath, long seconds) {
-        return new WebDriverWait(driver.get(), Duration.ofSeconds(seconds))
-                .until(ExpectedConditions.elementToBeClickable(By.xpath(xPath)));
-    }
 }

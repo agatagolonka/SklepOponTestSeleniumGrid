@@ -1,5 +1,6 @@
 package com.github.agatagolonka.sklepoponseleniumgrid.drivers.pageObject;
 
+import com.github.agatagolonka.sklepoponseleniumgrid.drivers.PropertyManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -24,7 +25,7 @@ public class RegisterPage extends BasePage {
     private static WebElement REGISTER;
 
 
-    public RegisterPage(WebDriver driver) {
-        super(driver);
+    public RegisterPage(WebDriver driver, PropertyManager propertyManager) {
+        super(driver, propertyManager);
     }
 }

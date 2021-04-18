@@ -8,6 +8,5 @@ public class SklepOponTest extends BaseTest{
     @Test
     public void goToHomepageTest(){
         homePage.open();
-
     }
 }
