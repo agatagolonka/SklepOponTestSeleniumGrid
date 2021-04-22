@@ -18,11 +18,12 @@ public class BaseStep {
     protected DriverManager driverManager = null;
 
 
-    @Parameters("browserName")
+   // @Parameters("browserName")
     @Before
-    public void setup(@Optional("Chrome") String browserName, ITestContext context) {
-        driverManager = new DriverManager();
-        driver = driverManager.getDriver(browserName);
+    public void setup()
+        //(@Optional("Chrome") String browserName, ITestContext context) {
+    { driverManager = new DriverManager();
+        driver = driverManager.getDriver("Chrome");
 
         homePage.open();
     }
